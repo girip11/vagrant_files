@@ -1,0 +1,43 @@
+# Basic Ubuntu official image with docker installed after provisioning
+# Reference: https://www.vagrantup.com/docs/provisioning/docker.html
+
+Vagrant.configure("2") do |config|
+  # This box runs Ubuntu 18.04 LTS bionic beaver and PostgreSQL 10 base box
+  # config.vm.box = "KPM/miller_dd_box"
+  # config.vm.box_version = "1.0.0"
+  config.vm.box =
+    "ubuntu/bionic64"
+  config.vm.box_version = "20191030.0.0"
+  config.vm.box_check_update = true
+
+  # The hostname set for the VM should only contain letters, numbers,
+  # hyphens or dots. It cannot start with a hyphen or dot.
+  config.vm.define "postgres-vm" do |postgres_vm|
+    postgres_vm.vm.hostname = "postgres-vm"
+
+    # This is required so that the VM can be accessed through the IP from the host
+    postgres_vm.vm.network "public_network", bridge: "wlo1"
+
+    postgres_vm.vm.provider "virtualbox" do |vb|
+      vb.gui = false
+      vb.memory = 2_048
+      vb.cpus = 2
+    end
+  end
+
+  # pgadmin4 requires username and password during installation
+  # hence the script to install postgresql and pgadmin4 is executed after VM is provisioned
+  # by doing ssh in to VM
+  config.vm.provision "shell", inline: "echo 'VM is up'"
+
+  # Create a forwarded port mapping which allows access to a specific port
+  # within the machine from a port on the host machine. In the example below,
+  # accessing "localhost:8080" will access port 80 on the guest machine.
+  # NOTE: This will enable public access to the opened port
+  # config.vm.network "forwarded_port", guest: 80, host: 8080
+
+  # Create a forwarded port mapping which allows access to a specific port
+  # within the machine from a port on the host machine and only allow access
+  # via 127.0.0.1 to disable public access
+  # config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
+end

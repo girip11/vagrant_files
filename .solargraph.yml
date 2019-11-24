@@ -1,0 +1,35 @@
+---
+include:
+  - "**/*.rb"
+  - "**/Vagrantfile"
+exclude:
+  - ".bundle/**/*"
+  - gem/dependencies/**/*
+require:
+  - actioncable
+  - actionmailer
+  - actionpack
+  - actionview
+  - activejob
+  - activemodel
+  - activerecord
+  - activestorage
+  - activesupport
+  - rails
+  - carrierwave
+  - mini_magick
+  - figaro
+  - fog-azure-rm
+  - fog-aws
+  - sitemap_generator
+  - safe_random
+  - city-state
+  - csv
+domains: []
+reporters:
+  - rubocop
+  - require_not_found
+plugins:
+  - runtime
+require_paths: []
+max_files: 10000
