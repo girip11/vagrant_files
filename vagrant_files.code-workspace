@@ -1,0 +1,40 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "terminal.integrated.rendererType": "dom",
+    "git.autorefresh": true,
+    "markdownlint.ignore": ["**/*.md.html"],
+    "files.insertFinalNewline": true,
+    "files.associations": {
+      "*.md.html": "markdown"
+    },
+    "ruby.useBundler": false,
+    "ruby.useLanguageServer": true,
+    "ruby.lint": {
+      "rubocop": {
+        "lint": true
+      }
+    },
+    "ruby.format": false,
+
+    "emeraldwalk.runonsave": {
+      "commands": [
+        {
+          "match": "Vagrantfile$",
+          // "cmd": "echo ${file}",
+          "cmd": "rbprettier --write '${file}'",
+          "isAsync": false
+        }
+      ]
+    },
+    "ruby.lintDebounceTime": 1000,
+    "ruby.codeCompletion": "rcodetools",
+    "ruby.intellisense": "rubyLocate",
+
+    "solargraph.useBundler": false
+  }
+}
