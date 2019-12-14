@@ -5,26 +5,7 @@ include:
 exclude:
   - ".bundle/**/*"
   - gem/dependencies/**/*
-require:
-  - actioncable
-  - actionmailer
-  - actionpack
-  - actionview
-  - activejob
-  - activemodel
-  - activerecord
-  - activestorage
-  - activesupport
-  - rails
-  - carrierwave
-  - mini_magick
-  - figaro
-  - fog-azure-rm
-  - fog-aws
-  - sitemap_generator
-  - safe_random
-  - city-state
-  - csv
+require: []
 domains: []
 reporters:
   - rubocop
