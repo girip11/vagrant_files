@@ -1,6 +1,10 @@
 {
   "editor.renderWhitespace": "all",
 
+  "[ruby]": {
+    "editor.formatOnSave": true
+  },
+
   "[markdown]": {
     "editor.wordWrap": "wordWrapColumn",
     "editor.wordWrapColumn": 80,
