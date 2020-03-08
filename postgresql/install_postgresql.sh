@@ -21,13 +21,13 @@ function configure_postgresql() {
   postgresql_conf="$postgresql_conf_path/postgresql.conf"
 
   if [[ -s $postgresql_conf ]]; then
-    listen_addresses=$(cat $postgresql_conf | grep 'listen_addresses')
+    listen_addresses=$(grep 'listen_addresses' < "$postgresql_conf")
 
     if [[ ${listen_addresses:0:1} == '#' ]]; then
       uncommented=${listen_addresses:1}
       listen_all_addresses=${uncommented/localhost/*}
       echo "Original string: $listen_addresses, replacement string: $listen_all_addresses"
-      sed -i "s/${listen_addresses}/${listen_all_addresses}/" $postgresql_conf
+      sed -i "s/${listen_addresses}/${listen_all_addresses}/" "$postgresql_conf"
     fi
   else
     echo "$postgresql_conf file doesnot exist"
@@ -37,7 +37,7 @@ function configure_postgresql() {
   # host  all  all  0.0.0.0/0 md5
   pg_hba_conf="$postgresql_conf_path/pg_hba.conf"
   pattern="^host[[:space:]]*all[[:space:]]*all[[:space:]]*[[:space:]]*127.0.0.1/32[[:space:]]*md5$"
-  search=$(cat $pg_hba_conf | grep -x $pattern)
+  search=$(grep -x "$pattern" < "$pg_hba_conf")
 
   if [[ -n $search ]]; then
     replace=${search/127.0.0.1\/32/0.0.0.0\/0}
@@ -47,7 +47,7 @@ function configure_postgresql() {
     escaped_search=${search/\//\\\/}
     escaped_replace=${replace/\//\\\/}
 
-    sed -i "s/$escaped_search/$escaped_replace/" $pg_hba_conf
+    sed -i "s/$escaped_search/$escaped_replace/" "$pg_hba_conf"
   fi
 
   systemctl restart postgresql
@@ -66,7 +66,7 @@ function set_postgresql_user_passwd() {
   su -c "$psql_cmd" postgres
 }
 
-if ! $(systemctl status postgresql | grep 'postgresql.service'); then
+if ! apt list | grep 'postgresql-server'; then
   install_postgresql
   set_postgresql_user_passwd 'postgres' 'postgres'
   configure_postgresql '/etc/postgresql/10/main'
@@ -74,9 +74,4 @@ if ! $(systemctl status postgresql | grep 'postgresql.service'); then
   echo "Postgresql was installed successfully"
 else
   echo "Postgresql was already installed"
-fi
-
-if ! $(command -v pgadmin4); then
-  apt update
-  apt install -y pgadmin4 pgadmin4-apache2
 fi

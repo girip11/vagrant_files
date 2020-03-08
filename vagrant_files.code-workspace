@@ -35,6 +35,11 @@
     "ruby.codeCompletion": "rcodetools",
     "ruby.intellisense": "rubyLocate",
 
-    "solargraph.useBundler": false
+    "solargraph.useBundler": false,
+
+    "shellcheck.enable": true,
+    "shellcheck.useWorkspaceRootAsCwd": true,
+    "shellcheck.run": "onSave",
+    "shellformat.flag": "-i 2 -ci -sr -bn"
   }
 }
