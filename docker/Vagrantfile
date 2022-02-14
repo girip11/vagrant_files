@@ -5,6 +5,7 @@ Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/bionic64"
   config.vm.box_version = "20191030.0.0"
   config.vm.box_check_update = true
+  config.vbguest.auto_update = false if Vagrant.has_plugin?("vagrant-vbguest")
 
   # The hostname set for the VM should only contain letters, numbers,
   # hyphens or dots. It cannot start with a hyphen or dot.
@@ -19,6 +20,9 @@ Vagrant.configure("2") do |config|
       vb.memory = 2_048
       vb.cpus = 2
     end
+    docker_vm.ssh.insert_key = false
+    docker_vm.vm.provision "file",
+                           source: "~/.ssh/vagrant_vm_rsa.pub", destination: "~/.ssh/id_rsa.pub"
   end
 
   # use docker provisioner instead of the shell provisioner
