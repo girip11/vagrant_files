@@ -1,0 +1,49 @@
+# Basic Ubuntu official image
+# can make execute a shell script using vm.provision option as shell
+# Inline script can be executed using inline option and a shell script
+# can be executed using path option
+# Reference: https://www.vagrantup.com/docs/provisioning/shell.html
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/focal64"
+  config.vm.box_version = "20220208.0.0"
+  config.vm.box_check_update = true
+  config.vbguest.auto_update = false if Vagrant.has_plugin?("vagrant-vbguest")
+
+  # The hostname set for the VM should only contain letters, numbers,
+  # hyphens or dots. It cannot start with a hyphen or dot.
+  config.vm.define "airflow-vm" do |airflow_vm|
+    airflow_vm.vm.hostname = "airflow-vm"
+
+    # This is required so that the VM can be accessed through the IP from the host
+    airflow_vm.vm.network "public_network", bridge: "wlo1", ip: "192.168.1.124"
+
+    airflow_vm.vm.provider "virtualbox" do |vb|
+      vb.gui = false
+      vb.memory = 3_072
+      vb.cpus = 2
+    end
+
+    airflow_vm.ssh.insert_key = false
+    airflow_vm.ssh.private_key_path = %w[~/.vagrant.d/insecure_private_key ~/.ssh/vagrant_vm_rsa]
+    airflow_vm.vm.provision "file",
+                            source: "~/.ssh/vagrant_vm_rsa.pub",
+                            destination: "~/.ssh/vagrant_vm_rsa.pub"
+    airflow_vm.vm.provision "shell",
+                            inline: <<-SHELL
+      cat /home/vagrant/.ssh/vagrant_vm_rsa.pub > /home/vagrant/.ssh/authorized_keys
+    SHELL
+    airflow_vm.vm.provision "shell", path: "airflow_setup.sh"
+  end
+
+  # Create a forwarded port mapping which allows access to a specific port
+  # within the machine from a port on the host machine. In the example below,
+  # accessing "localhost:8080" will access port 80 on the guest machine.
+  # NOTE: This will enable public access to the opened port
+  config.vm.network "forwarded_port", guest: 8080, host: 8090, host_ip: "127.0.0.1"
+
+  # Create a forwarded port mapping which allows access to a specific port
+  # within the machine from a port on the host machine and only allow access
+  # via 127.0.0.1 to disable public access
+  # config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
+end
